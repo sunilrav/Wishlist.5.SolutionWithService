@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Wishlist.Core.Domain;
 using Wishlist.Core.Interfaces;
 
@@ -17,18 +16,24 @@ namespace Wishlist.Service
         public void AddWishlistItem(string description, int quantity)
         {
             var wishListItem = new WishListItem
-                {
-                    Description = description,
-                    Quantity = quantity
-                };
+            {
+                Description = description,
+                Quantity = quantity
+            };
 
-            _unitOfWork.WishListItemRepository.Insert(wishListItem);
-            _unitOfWork.Save();
+            using (_unitOfWork)
+            {
+                _unitOfWork.WishListItemRepository.Insert(wishListItem);
+                _unitOfWork.Save();
+            }
         }
 
         public IList<WishListItem> GetAllWishlistItems()
         {
-            return (List<WishListItem>) _unitOfWork.WishListItemRepository.GetAll();
+            using (_unitOfWork)
+            {
+                return (List<WishListItem>)_unitOfWork.WishListItemRepository.GetAll();
+            }                        
         }
     }
 }
